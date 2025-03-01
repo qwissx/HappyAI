@@ -1,7 +1,10 @@
-from dependecies import openai_cli, bot
+import subprocess
+import os
 
 from aiogram.types import Message
-import subprocess
+
+from dependency import bot
+from dependencies import assistance as asis
 
 
 async def voice_handler(message: Message):
@@ -19,10 +22,14 @@ async def voice_handler(message: Message):
 
     subprocess.run(command, check=True)
 
-    audio_file = open(output_file, "rb")
-    transcription = openai_cli.audio.transcriptions.create(
-        model="whisper-1", 
-        file=audio_file
-    )
+    text = await asis.transcribe_audio(output_file)
+    response = await asis.get_assistant_response(text)
 
-    print(transcription.text)
+    save_as = f"static/answer_{file_id}.mp3"
+    voice_response = await asis.text_to_speech(response, save_as)
+
+    await message.answer_audio(save_as)
+
+    os.remove(input_file)
+    os.remove(output_file)
+    os.remove(save_as)

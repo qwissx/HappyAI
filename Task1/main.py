@@ -7,7 +7,7 @@ from aiogram.filters import CommandStart
 from handlers.start import start_handler
 from handlers.voice import voice_handler
 
-from dependecies import dp, bot
+from dependency import dp, bot
 
 
 dp.message(lambda message: message.voice is not None)(voice_handler)
