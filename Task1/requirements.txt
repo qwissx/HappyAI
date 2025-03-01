@@ -20,7 +20,7 @@ imageio-ffmpeg==0.6.0
 jiter==0.8.2
 magic-filter==1.0.12
 multidict==6.1.0
-numpy==2.2.3
+numpy==2.0.2
 openai==1.65.1
 pillow==10.4.0
 proglog==0.1.10
