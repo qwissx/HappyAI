@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y ffmpeg
 
 WORKDIR /app
 
-COPY requirements.txt ./Task1
+COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
