@@ -12,8 +12,8 @@ class Settings(BaseSettings):
     db_host: str = Field(..., env="DB_HOST")
     db_pass: str = Field(..., env="DB_PASS")
 
-    class Config:
-        env_file = ".env"
+    # class Config:
+    #     env_file = ".env"
 
     @property
     def db_url(self):
