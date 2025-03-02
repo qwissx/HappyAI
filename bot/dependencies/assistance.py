@@ -70,7 +70,7 @@ async def text_to_speech(text, output_file):
 
 
 async def value_completions(value, user_id):
-    response = await client.chat.completions.create(
+    response = await openai_cli.chat.completions.create(
         model="gpt-4o",
         messages=[{'role':'user', 'content': f"Check, if {value} is value or purpose of man. The answer only can be 'true' or 'false'"}]
     )
