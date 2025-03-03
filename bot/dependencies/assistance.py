@@ -89,3 +89,4 @@ async def value_completions(value, user_id):
                 id=user_id, 
                 value=value,
             )
+            await session.commit()
