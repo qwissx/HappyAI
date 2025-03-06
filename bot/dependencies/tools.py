@@ -1,3 +1,5 @@
+import json
+
 from database.connection import async_session_maker
 from database.userRepository import UsersRepository
 
@@ -15,6 +17,17 @@ async def save_value(value):
             value=value,
         )
         await session.commit()
+
+
+async def choose_call_func(response: dict):
+    if "tool_calls" in response["choices"][0]["message"]:
+        tool_calls = response["choices"][0]["message"]["tool_calls"]
+
+        for tool_call in tool_calls:
+            args = json.loads(tool_call["function"]["arguments"])
+
+            if tool_call["function"]["name"] == "save_value":
+                await save_value(**args)
 
 
 tools = [{

@@ -3,10 +3,11 @@ import json
 from openai import OpenAIError
 
 from main import logging
-from dependencies.tools import tools
+from dependencies.tools import tools, choose_call_func
 from dependency import openai_cli
 from database.userRepository import UsersRepository
 from database.connection import async_session_maker
+from dependencies import cache as cD
 
 
 async def transcribe_audio(file_path):
@@ -18,36 +19,32 @@ async def transcribe_audio(file_path):
     return transcript.text
 
 
-async def get_assistant_response(user_input, assistant):
+async def get_assistant_response(user_input, user_id, assistant):
     thread = await openai_cli.beta.threads.create()
 
-    await openai_cli.beta.threads.messages.create(
-        thread_id=thread.id,
-        role="user",
-    )
-    
+    await cD.add_cache_message(user_id, user_input)
+    users_messages = await cD.get_cache_messages(user_id)
+
     try:
-        run = await openai_cli.beta.threads.runs.create_and_poll(
-            thread_id=thread_id, 
+        response = await openai_cli.beta.threads.runs.create_and_poll(
+            thread_id=thread.id, 
             assistant_id=assistant.id, 
             poll_interval_ms=2000,
             messages=[
                 {"role": "system", "content": "\
                     Find in the dialogue the value of the user and validate this value.\
                     If value is value or purpose of a man then call function save_value"},
-                {"role": "user", "content": user_input},
-            ],
+            ] + users_messages,
             tools=tools,
         )
         
-        if run.status == "completed":
-            messages = await openai_cli.beta.messages.list(thread_id=thread.id)
+        if response.status == "completed":
+            await choose_call_func(response)
 
-            for message in messages:
-                if message.role == "assistant":
-                    return assistant.content[0]['text']['value']
+            return response["choices"][0]["message"]["content"]
 
-        if run.status in ['expired','failed','cancelled','incomplete']:
+
+        if response.status in ['expired','failed','cancelled','incomplete']:
             logging.exception("Failed get response from OpenAI.")
 
     except OpenAIError as e:
