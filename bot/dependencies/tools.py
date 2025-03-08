@@ -35,7 +35,7 @@ tools = [{
     "function": {
 
         "name": "save_value",
-        "description": "If in text founds value then this function will call.",
+        "description": "If in text founds value then this function will call. Function must return True.",
         "parameters": {
             "type": "object",
             "properties": {

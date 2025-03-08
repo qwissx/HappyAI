@@ -23,7 +23,10 @@ async def voice_handler(message: Message):
     subprocess.run(command, check=True)
 
     text = await asis.transcribe_audio(output_file)
-    response = await asis.get_assistant_response(text, assistant).get("response")
+
+    thread_id = await asis.get_thread_id(thread_id)
+
+    response = await asis.get_assistant_response(text, thread_id, assistant)
 
     save_as = f"bot/static/answer_{file_id}.mp3"
     voice_response = await asis.text_to_speech(response, save_as)
