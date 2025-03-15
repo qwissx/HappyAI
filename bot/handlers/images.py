@@ -1,3 +1,5 @@
+import os
+
 from aiogram.types import Message
 
 from dependency import bot
@@ -20,5 +22,7 @@ async def analyze_image_handler(message: Message):
 
     thread_id = await asis.get_thread_id(user_id)
     response = await asis.analyze_image(image_path)
+
+    os.remove(image_path)
 
     await message.answer(response)
