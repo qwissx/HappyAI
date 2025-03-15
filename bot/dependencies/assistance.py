@@ -9,6 +9,7 @@ from database.userRepository import UsersRepository
 from database.connection import async_session_maker
 from dependencies import cache as cD
 from dependencies import funcs as fD
+from dependencies import image as iD
 
 
 async def make_action(run):
@@ -106,3 +107,42 @@ async def get_thread_id(user_id):
         await cD.add_user_thread(user_id, thread_id)
 
     return thread_id
+
+
+async def analyze_image(image, thread_id):
+    base64_image = iD.encode_image(image)
+    while len(base64_image) > 86_000:
+            iD.reduce_image_quality(image)
+            base64_image = iD.encode_image(image)
+
+    try:
+        run = await openai.chat.completions.create(
+                    model = "gpt-4-vision-preview",
+                    thread_id=thread_id,
+                    messages = [
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text", 
+                                    "text": "What mood this man is?"},
+                                {
+                                    "type": "image_url",
+                                    "image_url": f"data:image/jpeg;base64,{base64_image}",
+                                },
+                            ],
+                        }
+                    ]
+                )
+
+        if run.status == "completed":
+
+            return run["choices"][0]["message"]["content"]
+
+
+        if run.status in ['expired','failed','cancelled','incomplete']:
+            logging.exception("Failed get response from OpenAI.")
+
+    except openai.OpenAIError as e:
+        logging.exception("Error exception:", e)
+        

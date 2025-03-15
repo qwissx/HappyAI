@@ -4,6 +4,7 @@ from aiogram import Bot, Dispatcher
 from openai import AsyncOpenAI
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from amplitude import Amplitude
 
 from settings import settings as st
 

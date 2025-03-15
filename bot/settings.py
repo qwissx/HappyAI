@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     redis_host: str = Field(..., env="REDIS_HOST")
     redis_port: str = Field(..., env="REDIS_PORT")
 
+    amplitude_api_key: str = Field(..., env="AMPLITUDE_API_KEY")
+
+
     class Config:
         env_file = ".env"
 

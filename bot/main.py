@@ -8,11 +8,13 @@ from aiogram.filters import CommandStart
 from handlers.start import start_handler
 from handlers.voice import voice_handler
 from handlers.default import default_handler
+from handlers.images import analyze_image_handler
 
 from dependency import dp, bot
 
 
 dp.message(F.voice)(voice_handler)
+dp.message(lambda message: message.photo is not None)(analyze_image_handler)
 dp.message(CommandStart)(start_handler)
 dp.message(lambda message: message is not None)(default_handler)
 
