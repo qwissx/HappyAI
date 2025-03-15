@@ -5,10 +5,14 @@ from aiogram.types import Message
 
 from dependency import bot, assistant
 from dependencies import assistance as asis
+from dependencies import event as eD
 
 
 async def voice_handler(message: Message):
     voice = message.voice
+    user_id = message.from_user.id
+
+    eD.event_handler("Voice Message", user_id)
     
     file_id = voice.file_id
     file = await bot.get_file(file_id)
@@ -24,7 +28,7 @@ async def voice_handler(message: Message):
 
     text = await asis.transcribe_audio(output_file)
 
-    thread_id = await asis.get_thread_id(thread_id)
+    thread_id = await asis.get_thread_id(user_id)
 
     response = await asis.get_assistant_response(text, thread_id, assistant)
 

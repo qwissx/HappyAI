@@ -1,4 +1,5 @@
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 from aiogram import Bot, Dispatcher
 from openai import AsyncOpenAI
@@ -19,3 +20,7 @@ assistant = asyncio.run(openai_cli.beta.assistants.create(
     instructions="You must give answers and analyze the text for values",
     model="gpt-4",
 ))
+
+amp = Amplitude(st.amplitude_api_key)
+
+executer = ThreadPoolExecutor()
