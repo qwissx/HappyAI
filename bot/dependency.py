@@ -26,7 +26,10 @@ openai_cli = AsyncOpenAI(api_key=st.openai_api_key)
 
 assistant = asyncio.run(openai_cli.beta.assistants.create(
     name="assistant",
-    instructions="You must give answers and analyze the text for values",
+    instructions=
+        "You must give answers and analyze the text for values\
+        Use your knowledge base to answer question about stress.\
+        Isert the file name after the quoted phrase from this file.",
     model="gpt-4",
     tools=[{"type": "file_search"}],
 ))

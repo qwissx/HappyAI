@@ -3,7 +3,6 @@ from aiogram.types import Message
 
 from dependencies import assistance as asis
 from dependency import assistant
-from dependencies import cache as cD
 from dependencies import event as eD
 
 
