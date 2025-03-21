@@ -1,6 +1,7 @@
 import json
 
 import openai
+from aiogram.fsm.context import FSMContext
 
 from main import logging
 from dependencies.tools import tools, choose_call_func
@@ -97,14 +98,14 @@ async def text_to_speech(text, output_file):
     response.stream_to_file(output_file)
 
 
-async def get_thread_id(user_id):
-    thread_id = await cD.get_user_thread(user_id)
+async def get_user_thread_id(state: FSMContext):
+    user_data = await state.get_data()
+    thread_id = user_data.get("thread_id")
 
     if not thread_id:
         thread = await openai.beta.thread.create()
         thread_id = thread.id
-
-        await cD.add_user_thread(user_id, thread_id)
+        await state.update_data(thread_id=thread_id)
 
     return thread_id
 

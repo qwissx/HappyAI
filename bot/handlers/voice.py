@@ -28,7 +28,7 @@ async def voice_handler(message: Message):
 
     text = await asis.transcribe_audio(output_file)
 
-    thread_id = await asis.get_thread_id(user_id)
+    thread_id = await asis.get_user_thread_id(state)
 
     response = await asis.get_assistant_response(text, thread_id, assistant)
 
