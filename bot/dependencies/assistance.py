@@ -146,3 +146,14 @@ async def analyze_image(image, thread_id):
     except openai.OpenAIError as e:
         logging.exception("Error exception:", e)
         
+
+async def get_vectore_store_id(client: openai.AsyncOpenAI):
+    vector_stores = await client.vector_stores.list()
+    
+    store_id = vector_stores.get("first_id")
+
+    if not store_id:
+        vector_store = await client.vector_stores.create()
+        store_id = vector_store.get("id")
+
+    return store_id
