@@ -17,19 +17,9 @@ async def make_action(run):
     tool_call, args = fD.get_tool_calls_and_args(run)
 
     if await validate_value(thread_id, **args) == "True":
-        await choose_call_func(tool_call, **args)
+        result = await choose_call_func(tool_call, **args)
 
-    run = await client.beta.threads.runs.submit_tool_outputs(
-        thread_id=thread_id,
-        run_id=run.id,
-        tool_outputs=[
-            {
-            "output": "True",
-            }
-        ]
-    )
-
-    return run
+    return result
 
 
 async def validate_value(thread_id, **args):
@@ -73,8 +63,17 @@ async def get_assistant_response(user_input, thread_id, assistant):
         )
         
         if run.status == "required_action":
-            
-            run = await make_action(run)
+            result = await make_action(run)
+
+            run = await client.beta.threads.runs.submit_tool_outputs(
+                thread_id=thread_id,
+                run_id=run.id,
+                tool_outputs=[
+                    {
+                    "output": result.get("save_value"),
+                    }
+                ]
+            )
 
         if run.status == "completed":
 

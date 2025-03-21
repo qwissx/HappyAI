@@ -20,8 +20,13 @@ async def save_value(value):
 
 
 async def choose_call_func(tool_call: dict, **args):
+    result = {}
+
     if tool_call["function"]["name"] == "save_value":
         await save_value(**args)
+        result.update({"save_value": True})
+
+    return result
 
 
 tools = [{
